@@ -15,7 +15,8 @@ public:
         return st.empty(); 
     }
 };
-1 more __DEC_EVAL_METHOD__class Solution {
+// solution by one more method
+class Solution {
 public:
     bool isValid(string s) {
 
