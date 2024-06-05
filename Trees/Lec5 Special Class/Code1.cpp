@@ -2,7 +2,7 @@
 #include<queue>
 #include<map>
 using namespace std;
-
+//trees
 class Node{
 	public:
 	int data;
