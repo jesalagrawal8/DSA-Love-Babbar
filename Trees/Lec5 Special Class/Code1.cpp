@@ -3,7 +3,6 @@
 #include<map>
 using namespace std;
 //trees
-//test
 class Node{
 	public:
 	int data;
