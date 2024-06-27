@@ -13,6 +13,22 @@ class Node{
     }
 
 };
+class NodeData{
+    public:
+    int size;
+    int minVal;
+    int maxVal;
+    bool validBST;
+    NodeData(){
+
+    }
+    NodeData(int size,int max,int min,bool valid){
+        this->size = size;
+        minVal = min;
+        maxVal = max;
+        validBST = valid;
+    }
+};
 Node* insertIntoBST(Node* &root , int data){
     if(root == NULL){
         //this is the first node we haveto create
@@ -180,12 +196,114 @@ Node* findNodeInBST(Node* root,int target){
         return root;
  
  }
+ Node* bstUsingInorder(int inorder[], int s,int e){
+    //base case
+    if(s>e){
+        return NULL;
+    }
+
+    int mid = (s+e)/2;
+    int element =inorder[mid];
+    Node* root = new Node(element);
+
+    root->left = bstUsingInorder(inorder,s,mid-1);
+    root->right = bstUsingInorder(inorder,mid+1,e);
+
+    return root;
+     }
+    void convertIntoSortedDLL(Node* root,Node* &head){
+        //base case
+        if(root == NULL){
+            return;
+        }
+        //right subrtree into LL
+        convertIntoSortedDLL(root->right , head);
+
+        //attach root node
+        root->right = head;
+        
+        if(head!= NULL){
+            head->left = root;
+        }
+        //update head
+        head = root;
+
+        //left subtree into ll
+        convertIntoSortedDLL(root->left, head);
+    }
+    void printLinkedList(Node* &head){
+        Node* temp = head;
+
+        while(temp != NULL){
+            cout<< temp->data << " ";
+            temp = temp->right;
+        }
+        cout<<endl;
+    }
+    Node* sortedLinkedListIntoBST(Node* &head,int n){
+        //base case
+        if(n <= 0 || head == NULL){
+            return NULL;
+        }
+        Node* leftSubTree = sortedLinkedListIntoBST(head, n-1-n/2);
+
+        Node* root = head;
+        root->left = leftSubTree;
+
+        head = head->right;
+
+        //right part solve karna h
+        root->right = sortedLinkedListIntoBST(head,n/2);
+        return root;
+    }
+    NodeData findLargestBST(Node* root,int &ans){
+        //base case
+        if(root == NULL){
+            NodeData temp(0 , INT_MIN ,INT_MAX,true);
+            return temp;
+        }
+        NodeData leftKaAns = findLargestBST(root->left, ans);
+        NodeData rightKaAns = findLargestBST(root->right,ans);
+
+        //checking starts here
+        NodeData currNodeKaAns;
+
+        currNodeKaAns.size = leftKaAns.size +rightKaAns.size +1;
+        currNodeKaAns.maxVal = max(root->data, rightKaAns.maxVal);
+        currNodeKaAns.minVal = min(root->data , leftKaAns.minVal);
+         
+         if(leftKaAns.validBST && rightKaAns.validBST && (root->data > leftKaAns.maxVal && root->data < rightKaAns.minVal) ) {
+            currNodeKaAns.validBST = true;
+         }
+         else{
+            currNodeKaAns.validBST = false;
+         }
+         if(currNodeKaAns.validBST){
+            ans = max(ans , currNodeKaAns.size);
+         }
+         return currNodeKaAns;
+    }
 int main(){
-    Node* root = NULL;
-    cout<<"Enter the data for Node" << endl;
-    takeInput(root);
+    // Node* root = NULL;
+    // cout<<"Enter the data for Node" << endl;
+    // takeInput(root);
+
+    Node* root = new Node(5);
+    Node* first = new Node(2);
+    Node* second = new Node(4);
+    Node* third = new Node(1);
+    Node* fourth = new Node(3);
+
+    root->left = first;
+    root->right = second;
+    first->left = third;
+    first->right = fourth; 
     cout<<"Printing the tree"<<endl;
     levelOrderTraversal(root);
+
+    int ans = 0;
+    findLargestBST(root,ans);
+    cout<< "Largest BSK ka size " << ans << endl;
     // cout<<"Printing inorder:"<<endl;
     // inOrderTraversal(root);
     // cout<<endl;
@@ -201,9 +319,26 @@ int main(){
     // cout<<"minimum element: " << minValue(root)<<endl;;
     // cout<<"maxmum element: " << maxValue(root)<<endl;;
 
-    deleteNodeInBST(root,100);
-    levelOrderTraversal(root);
+    // deleteNodeInBST(root,100);
+    // levelOrderTraversal(root);
 
-    return 0;
+
+// int inorder[] = {1,2,3,4,5,6,7,8,9};
+// int s = 0;
+// int e = 8;
+
+// Node* root = bstUsingInorder(inorder,s,e);
+// levelOrderTraversal(root);
+// Node* head = NULL;
+
+// cout<<"printing ll "<<endl;
+// convertIntoSortedDLL(root,head);
+// printLinkedList(head);
+
+// Node* root1 = NULL;
+// root1 = sortedLinkedListIntoBST(head, 9);
+// cout<< "droping level order travesal for root1" << endl;
+// levelOrderTraversal(root1);
+//     return 0;
 }
  
